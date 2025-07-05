@@ -85,6 +85,7 @@ export interface AgentResponse {
 
 export interface CompanyAnalysisRequest {
   companyUrl: string;
+  locale?: string;
 }
 
 export interface CompanyAnalysisResponse {

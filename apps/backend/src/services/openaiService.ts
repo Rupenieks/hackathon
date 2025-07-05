@@ -10,7 +10,8 @@ export class OpenAIService {
   }
 
   async generateSearchQuestions(
-    companyInfo: BrandfetchCompanyInfo
+    companyInfo: BrandfetchCompanyInfo,
+    locale: string = "international"
   ): Promise<string[]> {
     try {
       // Extract essential company information
@@ -31,13 +32,16 @@ The questions should be:
 - Generic enough to not directly mention the company
 - Varied in intent (informational, transactional, navigational)
 - Optimized for search engines
+- Tailored for the specified locale/market: ${locale}
 
-For example, if the company is a car marketplace like AutoScout24, generate questions like:
-- "best car buying app"
-- "where to find used cars online"
-- "car listings website"
-- "how to sell my car online"
+For example, if the company is a car marketplace like AutoScout24 and the locale is "germany", generate questions like:
+- "best car buying app Germany"
+- "where to find used cars online Germany"
+- "car listings website Germany"
+- "how to sell my car online Germany"
 - "car marketplace Germany"
+
+If the locale is "international", generate generic questions without specific location mentions.
 
 Return ONLY a JSON array of strings, no additional text or explanation.`;
 
@@ -47,8 +51,9 @@ Company Name: ${companyData.name}
 Domain: ${companyData.domain}
 Description: ${companyData.description}
 Industries: ${companyData.industries.join(", ")}
+Target Locale: ${locale}
 
-Generate 10-15 search questions that users might ask when looking for similar services.`;
+Generate 10-15 search questions that users might ask when looking for similar services, tailored for the ${locale} market.`;
 
       const response = await axios.post(
         `${this.baseUrl}/chat/completions`,

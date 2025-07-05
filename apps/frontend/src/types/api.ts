@@ -93,4 +93,5 @@ export interface CompanyAnalysisResponse {
 
 export interface CompanyAnalysisRequest {
   companyUrl: string;
+  locale?: string;
 }

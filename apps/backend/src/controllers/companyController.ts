@@ -23,7 +23,8 @@ export class CompanyController {
 
   async analyzeCompany(req: Request, res: Response): Promise<void> {
     try {
-      const { companyUrl }: CompanyAnalysisRequest = req.body;
+      const { companyUrl, locale = "international" }: CompanyAnalysisRequest =
+        req.body;
 
       if (!companyUrl) {
         res.status(400).json({
@@ -41,8 +42,10 @@ export class CompanyController {
         await this.brandfetchService.getCompanyByDomain(domain);
 
       // Generate search questions using OpenAI
-      const searchQuestions =
-        await this.openaiService.generateSearchQuestions(companyInfo);
+      const searchQuestions = await this.openaiService.generateSearchQuestions(
+        companyInfo,
+        locale
+      );
 
       // Query agents with search questions asynchronously
       const agentResponses =

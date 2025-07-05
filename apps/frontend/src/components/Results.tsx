@@ -23,9 +23,10 @@ import type { CompanyAnalysisResponse } from "../types/api";
 interface ResultsProps {
   data: CompanyAnalysisResponse;
   onBack: () => void;
+  locale?: string;
 }
 
-export function Results({ data, onBack }: ResultsProps) {
+export function Results({ data, onBack, locale }: ResultsProps) {
   const rankedCompanies = calculateRankedCompanies(data.agentResponses || []);
 
   return (
@@ -53,9 +54,20 @@ export function Results({ data, onBack }: ResultsProps) {
             Back
           </Button>
         </div>
-        <h2 className="text-3xl font-bold mb-2">Analysis Results</h2>
+        <div className="flex items-center gap-4 mb-2">
+          <h2 className="text-3xl font-bold">Analysis Results</h2>
+          {locale && locale !== "international" && (
+            <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm">
+              <span>🌍</span>
+              <span className="font-medium capitalize">{locale}</span>
+            </div>
+          )}
+        </div>
         <p className="text-muted-foreground">
           Comprehensive analysis with rankings and visualizations
+          {locale && locale !== "international" && (
+            <span className="ml-1">for {locale} market</span>
+          )}
         </p>
       </motion.div>
 

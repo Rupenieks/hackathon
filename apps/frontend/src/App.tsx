@@ -4,15 +4,17 @@ import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { useAnalyzeDomain } from "./hooks/useAnalyzeDomain";
 import { Results } from "./components/Results";
+import { LocaleSelector } from "./components/LocaleSelector";
 
 function App() {
   const [domain, setDomain] = useState("");
+  const [locale, setLocale] = useState("international");
   const analyzeDomain = useAnalyzeDomain();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!domain) return;
-    analyzeDomain.mutate({ companyUrl: domain });
+    analyzeDomain.mutate({ companyUrl: domain, locale });
   };
 
   const handleBack = () => {
@@ -59,6 +61,7 @@ function App() {
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
                 />
+                <LocaleSelector value={locale} onValueChange={setLocale} />
                 <Button
                   type="submit"
                   className="w-full"
@@ -87,7 +90,11 @@ function App() {
             transition={{ duration: 0.5 }}
             className="min-h-screen"
           >
-            <Results data={analyzeDomain.data} onBack={handleBack} />
+            <Results
+              data={analyzeDomain.data}
+              onBack={handleBack}
+              locale={locale}
+            />
           </motion.div>
         )}
       </AnimatePresence>
