@@ -58,12 +58,30 @@ export function prepareRadarChartData(agentResponses: AgentResponse[]) {
 
 function getCompanyColor(companyName: string): string {
   const colors = [
-    "#0088FE",
-    "#00C49F",
-    "#FFBB28",
-    "#FF8042",
-    "#8884D8",
-    "#82CA9D",
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#96CEB4",
+    "#FFEAA7",
+    "#DDA0DD",
+    "#98D8C8",
+    "#F7DC6F",
+    "#BB8FCE",
+    "#85C1E9",
+    "#F8C471",
+    "#82E0AA",
+    "#F1948A",
+    "#85C1E9",
+    "#D7BDE2",
+    "#F9E79F",
+    "#A9DFBF",
+    "#F5B7B1",
+    "#AED6F1",
+    "#FAD7A0",
+    "#D5A6BD",
+    "#A3E4D7",
+    "#F8C471",
+    "#BB8FCE",
   ];
   const hash = companyName
     .split("")

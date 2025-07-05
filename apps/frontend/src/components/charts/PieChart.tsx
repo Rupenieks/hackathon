@@ -27,33 +27,47 @@ const COLORS = [
 
 export function PieChart({ data, title }: PieChartProps) {
   return (
-    <div className="w-full h-80">
-      <h3 className="text-lg font-semibold mb-4 text-center">{title}</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <RechartsPieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            label={({ name, percent }) =>
-              `${name} ${((percent || 0) * 100).toFixed(0)}%`
-            }
-            outerRadius={80}
-            fill="#8884d8"
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={entry.color || COLORS[index % COLORS.length]}
+    <div className="w-full">
+      <h3 className="text-lg font-semibold mb-6 text-center">{title}</h3>
+      <div className="flex items-start gap-8">
+        <div className="w-64 h-64 flex-shrink-0">
+          <ResponsiveContainer width="100%" height="100%">
+            <RechartsPieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.color || COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </RechartsPieChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex-1 space-y-3">
+          {data.map((entry, index) => (
+            <div key={index} className="flex items-center gap-3">
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: entry.color }}
               />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </RechartsPieChart>
-      </ResponsiveContainer>
+              <span className="font-medium">{entry.name}</span>
+              <span className="text-muted-foreground">
+                ({entry.value} mentions)
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

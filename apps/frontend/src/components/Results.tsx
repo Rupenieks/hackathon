@@ -16,9 +16,8 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { calculateRankedCompanies } from "../utils/analysis";
-import { preparePieChartData, prepareRadarChartData } from "../utils/chartData";
+import { preparePieChartData } from "../utils/chartData";
 import { PieChart } from "./charts/PieChart";
-import { RadarChart } from "./charts/RadarChart";
 import type { CompanyAnalysisResponse } from "../types/api";
 
 interface ResultsProps {
@@ -28,7 +27,6 @@ interface ResultsProps {
 
 export function Results({ data, onBack }: ResultsProps) {
   const rankedCompanies = calculateRankedCompanies(data.agentResponses || []);
-  const radarData = prepareRadarChartData(data.agentResponses || []);
 
   return (
     <motion.div
@@ -67,10 +65,9 @@ export function Results({ data, onBack }: ResultsProps) {
         transition={{ delay: 0.4 }}
       >
         <Tabs defaultValue="table" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="table">Rankings Table</TabsTrigger>
             <TabsTrigger value="charts">Question Charts</TabsTrigger>
-            <TabsTrigger value="radar">Cross-Question Analysis</TabsTrigger>
           </TabsList>
 
           <TabsContent value="table" className="mt-6">
@@ -142,14 +139,14 @@ export function Results({ data, onBack }: ResultsProps) {
           </TabsContent>
 
           <TabsContent value="charts" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-12">
               {data.agentResponses?.map((response, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 + index * 0.1 }}
-                  className="bg-card rounded-lg border p-4"
+                  className="bg-card rounded-lg border p-8"
                 >
                   <PieChart
                     data={preparePieChartData(response)}
@@ -158,20 +155,6 @@ export function Results({ data, onBack }: ResultsProps) {
                 </motion.div>
               ))}
             </div>
-          </TabsContent>
-
-          <TabsContent value="radar" className="mt-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="bg-card rounded-lg border p-6"
-            >
-              <RadarChart
-                data={radarData.data}
-                companies={radarData.companies}
-              />
-            </motion.div>
           </TabsContent>
         </Tabs>
       </motion.div>
