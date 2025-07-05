@@ -1,6 +1,6 @@
 # AI Search Analytics Backend
 
-This is the backend service for the AI Search Analytics platform. It provides APIs for company analysis using Brandfetch data and generates search questions using OpenAI.
+This is the backend service for the AI Search Analytics platform. It provides APIs for company analysis using Brandfetch data, generates search questions using OpenAI, and queries multiple LLM agents asynchronously for competitive analysis.
 
 ## Setup
 
@@ -88,12 +88,26 @@ Body:
     "where to find used cars online",
     "car listings website",
     "how to sell my car online",
-    "car marketplace Germany",
-    "used car search",
-    "car buying platform",
-    "automotive marketplace",
-    "car dealer website",
-    "vehicle listings"
+    "car marketplace Germany"
+  ],
+  "agentResponses": [
+    {
+      "question": "best car buying app",
+      "recommendations": [
+        {
+          "companyName": "CarGurus",
+          "domain": "cargurus.com",
+          "reason": "Popular car buying platform with extensive inventory",
+          "relevanceScore": 0.9
+        },
+        {
+          "companyName": "Cars.com",
+          "domain": "cars.com",
+          "reason": "Well-established automotive marketplace",
+          "relevanceScore": 0.85
+        }
+      ]
+    }
   ]
 }
 ```
@@ -112,6 +126,14 @@ Body:
 - Questions are designed to not mention the company directly
 - Optimized for search engine analysis
 - Covers informational, transactional, and navigational search intent
+
+### LLM Agent Querying
+
+- Sends search questions to multiple LLM agents asynchronously
+- Each agent provides 3-5 company recommendations per question
+- Agents are instructed to never mention the original company
+- Includes relevance scores and reasoning for each recommendation
+- Handles errors gracefully with Promise.allSettled()
 
 ## Error Handling
 
@@ -158,9 +180,9 @@ Common error scenarios:
 
 ## Next Steps
 
-This is the first phase of the AI Search Analytics platform. Future phases will include:
+This is the second phase of the AI Search Analytics platform. Future phases will include:
 
-- LLM response analysis for search questions
-- Competitor analysis
+- Competitor analysis and market share calculation
 - Website scraping with Puppeteer
 - SEO optimization analysis
+- Historical trend analysis

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { BrandfetchService } from "../services/brandfetchService.js";
 import { OpenAIService } from "../services/openaiService.js";
+import { LLMAgentService } from "../services/llmAgentService.js";
 import {
   CompanyAnalysisRequest,
   CompanyAnalysisResponse,
@@ -9,6 +10,7 @@ import {
 export class CompanyController {
   private brandfetchService: BrandfetchService;
   private openaiService: OpenAIService;
+  private llmAgentService: LLMAgentService;
 
   constructor(
     brandfetchService: BrandfetchService,
@@ -16,6 +18,7 @@ export class CompanyController {
   ) {
     this.brandfetchService = brandfetchService;
     this.openaiService = openaiService;
+    this.llmAgentService = new LLMAgentService(openaiService);
   }
 
   async analyzeCompany(req: Request, res: Response): Promise<void> {
@@ -41,10 +44,15 @@ export class CompanyController {
       const searchQuestions =
         await this.openaiService.generateSearchQuestions(companyInfo);
 
+      // Query agents with search questions asynchronously
+      const agentResponses =
+        await this.llmAgentService.queryAgentsWithQuestions(searchQuestions);
+
       const response: CompanyAnalysisResponse = {
         success: true,
         data: companyInfo,
         searchQuestions: searchQuestions,
+        agentResponses: agentResponses,
       };
 
       res.json(response);

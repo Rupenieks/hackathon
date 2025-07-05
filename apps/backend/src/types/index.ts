@@ -70,6 +70,19 @@ export interface BrandfetchCompanyInfo {
   urn?: string;
 }
 
+export interface CompanyRecommendation {
+  companyName: string;
+  domain: string;
+  reason: string;
+  relevanceScore: number;
+}
+
+export interface AgentResponse {
+  question: string;
+  recommendations: CompanyRecommendation[];
+  error?: string;
+}
+
 export interface CompanyAnalysisRequest {
   companyUrl: string;
 }
@@ -78,6 +91,7 @@ export interface CompanyAnalysisResponse {
   success: boolean;
   data?: BrandfetchCompanyInfo;
   searchQuestions?: string[];
+  agentResponses?: AgentResponse[];
   error?: string;
 }
 
