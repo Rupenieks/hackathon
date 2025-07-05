@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useQuestionOptimization } from "../hooks/useQuestionOptimization";
+import { getBaseDomain } from "../utils/analysis";
 import type { CompanyAnalysisResponse } from "../types/api";
 
 interface QuestionOptimizationProps {
@@ -70,7 +71,8 @@ export function QuestionOptimization({
     return agentResponses.reduce((total, response) => {
       const mentions =
         response.recommendations?.filter(
-          (rec: any) => rec.domain === targetDomain
+          (rec: any) =>
+            getBaseDomain(rec.domain) === getBaseDomain(targetDomain)
         ).length || 0;
       return total + mentions;
     }, 0);
@@ -275,7 +277,8 @@ export function QuestionOptimization({
                             <div
                               key={cIndex}
                               className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
-                                company.domain === targetDomain
+                                getBaseDomain(company.domain) ===
+                                getBaseDomain(targetDomain)
                                   ? "bg-green-100 text-green-800 border border-green-200"
                                   : "bg-muted"
                               }`}
@@ -291,7 +294,8 @@ export function QuestionOptimization({
                               <span className="font-medium">
                                 {company.companyName}
                               </span>
-                              {company.domain === targetDomain && (
+                              {getBaseDomain(company.domain) ===
+                                getBaseDomain(targetDomain) && (
                                 <Badge variant="default" className="text-xs">
                                   Target
                                 </Badge>

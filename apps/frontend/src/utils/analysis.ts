@@ -7,6 +7,21 @@ export interface RankedCompany {
   percentageMentions: number;
 }
 
+// Function to normalize domain by removing TLD
+export function normalizeDomain(domain: string): string {
+  // Remove TLD (everything after the last dot)
+  const parts = domain.split(".");
+  if (parts.length > 1) {
+    return parts.slice(0, -1).join(".");
+  }
+  return domain;
+}
+
+// Function to get the base domain for comparison
+export function getBaseDomain(domain: string): string {
+  return normalizeDomain(domain);
+}
+
 export function calculateRankedCompanies(
   agentResponses: AgentResponse[]
 ): RankedCompany[] {
@@ -17,15 +32,19 @@ export function calculateRankedCompanies(
   agentResponses.forEach((response) => {
     response.recommendations.forEach((rec) => {
       totalMentions++;
-      const existing = companyMap.get(rec.domain);
+      const baseDomain = getBaseDomain(rec.domain);
+      const existing = companyMap.get(baseDomain);
+
       if (existing) {
         existing.mentionCount += 1;
         // Keep the most descriptive company name
         if (rec.companyName.length > existing.companyName.length) {
           existing.companyName = rec.companyName;
         }
+        // Keep the original domain format for display
+        existing.domain = rec.domain;
       } else {
-        companyMap.set(rec.domain, {
+        companyMap.set(baseDomain, {
           companyName: rec.companyName,
           domain: rec.domain,
           mentionCount: 1,

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Trophy, TrendingUp, TrendingDown } from "lucide-react";
 import { Button } from "./ui/button";
-import { calculateRankedCompanies } from "../utils/analysis";
+import { calculateRankedCompanies, getBaseDomain } from "../utils/analysis";
 import type { CompanyAnalysisResponse } from "../types/api";
 
 interface ComparisonProps {
@@ -15,9 +15,12 @@ export function Comparison({ data, onBack, onNext, locale }: ComparisonProps) {
   const rankedCompanies = calculateRankedCompanies(data.agentResponses || []);
   const analyzedDomain = data.data?.domain || "";
 
-  // Find the rank of the analyzed domain
+  console.log("Analyzed domain", analyzedDomain);
+  console.log("Ranked companies", rankedCompanies);
+
+  // Find the rank of the analyzed domain using normalized domain comparison
   const analyzedCompanyRank = rankedCompanies.findIndex(
-    (company) => company.domain === analyzedDomain
+    (company) => getBaseDomain(company.domain) === getBaseDomain(analyzedDomain)
   );
 
   const isInTop10 = analyzedCompanyRank >= 0 && analyzedCompanyRank < 10;
@@ -126,7 +129,10 @@ export function Comparison({ data, onBack, onNext, locale }: ComparisonProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8 + index * 0.1 }}
                 className={`bg-card rounded-lg border p-4 ${
-                  company.domain === analyzedDomain ? "ring-2 ring-primary" : ""
+                  getBaseDomain(company.domain) ===
+                  getBaseDomain(analyzedDomain)
+                    ? "ring-2 ring-primary"
+                    : ""
                 }`}
               >
                 <div className="flex items-center justify-between">
