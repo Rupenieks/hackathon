@@ -49,13 +49,13 @@ export class BrandfetchService {
   async getCompanyByDomain(domain: string): Promise<BrandfetchCompanyInfo> {
     try {
       // Try to get company directly by domain using the brands endpoint
-      const response = peecAIData;
-      // const response = await axios.get(`${this.baseUrl}/brands/${domain}`, {
-      //   headers: {
-      //     Authorization: `Bearer ${this.apiKey}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
+      // const response = peecAIData;
+      const response = await axios.get(`${this.baseUrl}/brands/${domain}`, {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       return response.data;
     } catch (error) {

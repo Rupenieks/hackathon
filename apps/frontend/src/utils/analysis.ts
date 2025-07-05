@@ -3,7 +3,6 @@ import type { AgentResponse, CompanyRecommendation } from "../types/api";
 export interface RankedCompany {
   companyName: string;
   domain: string;
-  totalScore: number;
   mentionCount: number;
   percentageMentions: number;
 }
@@ -18,15 +17,17 @@ export function calculateRankedCompanies(
   agentResponses.forEach((response) => {
     response.recommendations.forEach((rec) => {
       totalMentions++;
-      const existing = companyMap.get(rec.companyName);
+      const existing = companyMap.get(rec.domain);
       if (existing) {
-        existing.totalScore += rec.relevanceScore;
         existing.mentionCount += 1;
+        // Keep the most descriptive company name
+        if (rec.companyName.length > existing.companyName.length) {
+          existing.companyName = rec.companyName;
+        }
       } else {
-        companyMap.set(rec.companyName, {
+        companyMap.set(rec.domain, {
           companyName: rec.companyName,
           domain: rec.domain,
-          totalScore: rec.relevanceScore,
           mentionCount: 1,
           percentageMentions: 0, // Will be calculated after all companies are processed
         });
