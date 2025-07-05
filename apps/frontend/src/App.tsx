@@ -3,18 +3,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { useAnalyzeDomain } from "./hooks/useAnalyzeDomain";
-import { useAnalyzeDomains } from "./hooks/useAnalyzeDomains";
+import { useDomainComparison } from "./hooks/useDomainComparison";
 import { Results } from "./components/Results";
 import { LocaleSelector } from "./components/LocaleSelector";
 import { Comparison } from "./components/Comparison";
+import { DomainComparison } from "./components/DomainComparison";
 import { calculateRankedCompanies } from "./utils/analysis";
 
 function App() {
   const [domain, setDomain] = useState("");
   const [locale, setLocale] = useState("international");
-  const [step, setStep] = useState(0); // 0 = results, 1 = comparison, 2 = domain analysis
+  const [step, setStep] = useState(0); // 0 = results, 1 = comparison, 2 = domain comparison
   const analyzeDomain = useAnalyzeDomain();
-  const analyzeDomains = useAnalyzeDomains();
+  const [comparisonData, setComparisonData] = useState({
+    analyzedDomain: "",
+    competitorDomains: [] as string[],
+    locale,
+  });
+
+  const domainComparison = useDomainComparison(comparisonData);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +41,7 @@ function App() {
     }
   };
 
-  const handleDomainAnalysis = () => {
+  const handleDomainComparison = () => {
     if (!analyzeDomain.data) return;
 
     const rankedCompanies = calculateRankedCompanies(
@@ -52,12 +59,13 @@ function App() {
       .map((company) => company.domain)
       .filter((domain) => domain !== analyzedDomain);
 
-    analyzeDomains.mutate({
+    // Update the domain comparison hook with the actual data and start the analysis
+    setComparisonData({
       analyzedDomain,
       competitorDomains: topCompetitors,
       locale,
     });
-
+    domainComparison.analyzeDomainComparison();
     setStep(2);
   };
 
@@ -140,38 +148,38 @@ function App() {
               <Comparison
                 data={analyzeDomain.data}
                 onBack={handleBack}
-                onNext={handleDomainAnalysis}
+                onNext={handleDomainComparison}
                 locale={locale}
               />
             ) : (
               <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">Domain Analysis</h2>
-                  {analyzeDomains.isPending ? (
+                  <h2 className="text-2xl font-bold mb-4">
+                    Domain Comparison Analysis
+                  </h2>
+                  {domainComparison.isLoading ? (
                     <div className="space-y-4">
                       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
                       <p className="text-muted-foreground">
-                        Analyzing domains with Puppeteer...
+                        Analyzing domains with Puppeteer and comparing with
+                        AI...
                       </p>
                     </div>
-                  ) : analyzeDomains.isSuccess ? (
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">
-                        Analysis Complete
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Domain analysis has been completed. Check console for
-                        data.
-                      </p>
-                      <pre className="text-xs bg-muted p-4 rounded overflow-auto max-h-96">
-                        {JSON.stringify(analyzeDomains.data, null, 2)}
-                      </pre>
+                  ) : domainComparison.data ? (
+                    <div className="w-full max-w-6xl mx-auto p-6">
+                      <div className="flex justify-between items-center mb-6">
+                        <Button onClick={handleBack} variant="outline">
+                          ← Back
+                        </Button>
+                      </div>
+                      <DomainComparison data={domainComparison.data} />
                     </div>
-                  ) : analyzeDomains.isError ? (
+                  ) : domainComparison.error ? (
                     <div className="space-y-4">
-                      <p className="text-red-500">
-                        {(analyzeDomains.error as Error).message}
-                      </p>
+                      <p className="text-red-500">{domainComparison.error}</p>
+                      <Button onClick={handleBack} variant="outline">
+                        ← Back
+                      </Button>
                     </div>
                   ) : (
                     <p className="text-muted-foreground">Loading...</p>

@@ -132,3 +132,39 @@ export interface DomainAnalysisResponse {
   };
   error?: string;
 }
+
+export interface DomainComparisonAnalysis {
+  contentStrengths: string[];
+  contentWeaknesses: string[];
+  performanceAnalysis: string;
+  seoRecommendations: string[];
+  contentRecommendations: string[];
+}
+
+export interface CompetitorAnalysis {
+  domain: string;
+  keyDifferences: string[];
+  strengths: string[];
+  weaknesses: string[];
+  lessonsLearned: string[];
+}
+
+export interface DomainComparisonRequest {
+  analyzedDomain: string;
+  competitorDomains: string[];
+  locale?: string;
+}
+
+export interface DomainComparisonResponse {
+  success: boolean;
+  data?: {
+    analyzedDomain: DomainAnalysisData & {
+      analysis: DomainComparisonAnalysis;
+    };
+    competitorAnalyses: (DomainAnalysisData & {
+      analysis: CompetitorAnalysis;
+    })[];
+    overallInsights: string;
+  };
+  error?: string;
+}

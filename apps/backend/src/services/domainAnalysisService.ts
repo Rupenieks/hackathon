@@ -184,7 +184,7 @@ export class DomainAnalysisService {
               ?.getAttribute("content") || "";
 
           // Collect all meta tags
-          const metaTags = {};
+          const metaTags: Record<string, string> = {};
           document.querySelectorAll("meta").forEach((meta) => {
             const name =
               meta.getAttribute("name") || meta.getAttribute("property") || "";

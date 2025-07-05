@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { createCompanyRoutes } from "./routes/companyRoutes.js";
+import { createDomainComparisonRoutes } from "./routes/domainComparisonRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -13,15 +14,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-    service: "AI Search Analytics Backend",
-  });
-});
 
 // API routes
 const brandfetchApiKey = process.env.BRANDFETCH_API_KEY;
@@ -38,6 +30,7 @@ if (!openaiApiKey) {
 }
 
 app.use("/api", createCompanyRoutes(brandfetchApiKey, openaiApiKey));
+app.use("/api/domain-comparison", createDomainComparisonRoutes());
 
 // Error handling middleware
 app.use(
