@@ -16,8 +16,6 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { calculateRankedCompanies } from "../utils/analysis";
-import { preparePieChartData } from "../utils/chartData";
-import { PieChart } from "./charts/PieChart";
 import type { CompanyAnalysisResponse } from "../types/api";
 
 interface ResultsProps {
@@ -88,7 +86,7 @@ export function Results({ data, onBack, locale, onNext }: ResultsProps) {
         <Tabs defaultValue="table" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="table">Rankings Table</TabsTrigger>
-            <TabsTrigger value="charts">Question Charts</TabsTrigger>
+            <TabsTrigger value="charts">Questions</TabsTrigger>
           </TabsList>
 
           <TabsContent value="table" className="mt-6">
@@ -160,19 +158,38 @@ export function Results({ data, onBack, locale, onNext }: ResultsProps) {
           </TabsContent>
 
           <TabsContent value="charts" className="mt-6">
-            <div className="space-y-12">
+            <div className="space-y-8">
               {data.agentResponses?.map((response, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 + index * 0.1 }}
-                  className="bg-card rounded-lg border p-8"
+                  className="bg-card rounded-lg border p-6"
                 >
-                  <PieChart
-                    data={preparePieChartData(response)}
-                    title={response.question}
-                  />
+                  <h3 className="text-xl font-semibold mb-4 text-foreground">
+                    {response.question}
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {response.recommendations.map((company, companyIndex) => (
+                      <div
+                        key={companyIndex}
+                        className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg"
+                      >
+                        <img
+                          src={`https://cdn.brandfetch.io/${company.domain}/w/400/h/400?c=1idN2eYLKB0hVXPuRKG`}
+                          alt={company.companyName}
+                          className="w-6 h-6 rounded-full object-contain bg-white border"
+                          onError={(e) =>
+                            (e.currentTarget.style.display = "none")
+                          }
+                        />
+                        <span className="text-sm font-medium">
+                          {company.companyName}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </motion.div>
               ))}
             </div>
