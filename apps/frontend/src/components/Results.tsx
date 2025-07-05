@@ -44,7 +44,7 @@ export function Results({ data, onBack, locale, onNext }: ResultsProps) {
         transition={{ delay: 0.2 }}
         className="mb-8"
       >
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-4 justify-between">
           <Button
             variant="outline"
             size="sm"
@@ -54,6 +54,14 @@ export function Results({ data, onBack, locale, onNext }: ResultsProps) {
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
+
+          {onNext && (
+            <div className="flex justify-end mt-8">
+              <Button onClick={onNext} size="lg">
+                Next
+              </Button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4 mb-2">
           <h2 className="text-3xl font-bold">Analysis Results</h2>
@@ -172,13 +180,6 @@ export function Results({ data, onBack, locale, onNext }: ResultsProps) {
         </Tabs>
       </motion.div>
       {/* Next Button */}
-      {onNext && (
-        <div className="flex justify-end mt-8">
-          <Button onClick={onNext} size="lg">
-            Next
-          </Button>
-        </div>
-      )}
     </motion.div>
   );
 }
