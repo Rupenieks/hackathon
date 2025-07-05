@@ -107,7 +107,7 @@ Iteration: ${iteration}
 
 Instructions:
 1. Generate 10 NEW questions that are variations of the original questions
-2. Focus on questions that would likely mention ${targetDomain} or similar services
+2. Do not mention the target domain in the questions.
 3. Avoid any questions already in the "used questions" list
 4. If iteration > 1 and we got more hits, focus on the context that worked
 5. If iteration > 1 and we got fewer hits, try different approaches
