@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  chrome:
+    image: browserless/chrome:latest
+    ports:
+      - "9222:3000"
+    environment:
+      - MAX_CONCURRENT_SESSIONS=4
+      - CONNECTION_TIMEOUT=300000
+      - MAX_QUEUE_LENGTH=10

@@ -7,10 +7,11 @@ import type { CompanyAnalysisResponse } from "../types/api";
 interface ComparisonProps {
   data: CompanyAnalysisResponse;
   onBack: () => void;
+  onNext: () => void;
   locale?: string;
 }
 
-export function Comparison({ data, onBack, locale }: ComparisonProps) {
+export function Comparison({ data, onBack, onNext, locale }: ComparisonProps) {
   const rankedCompanies = calculateRankedCompanies(data.agentResponses || []);
   const analyzedDomain = data.data?.domain || "";
 
@@ -160,6 +161,22 @@ export function Comparison({ data, onBack, locale }: ComparisonProps) {
               </motion.div>
             ))}
           </div>
+        </motion.div>
+
+        {/* Next Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2 }}
+          className="mt-8 flex justify-center"
+        >
+          <Button
+            onClick={onNext}
+            size="lg"
+            className="px-8 py-3 text-lg font-medium"
+          >
+            Analyze SEO Differences
+          </Button>
         </motion.div>
       </motion.div>
     </motion.div>

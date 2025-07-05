@@ -3,15 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { useAnalyzeDomain } from "./hooks/useAnalyzeDomain";
+import { useAnalyzeDomains } from "./hooks/useAnalyzeDomains";
 import { Results } from "./components/Results";
 import { LocaleSelector } from "./components/LocaleSelector";
 import { Comparison } from "./components/Comparison";
+import { calculateRankedCompanies } from "./utils/analysis";
 
 function App() {
   const [domain, setDomain] = useState("");
   const [locale, setLocale] = useState("international");
-  const [step, setStep] = useState(0); // 0 = results, 1 = comparison
+  const [step, setStep] = useState(0); // 0 = results, 1 = comparison, 2 = domain analysis
   const analyzeDomain = useAnalyzeDomain();
+  const analyzeDomains = useAnalyzeDomains();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,12 +24,41 @@ function App() {
   };
 
   const handleBack = () => {
-    if (step === 1) {
+    if (step === 2) {
+      setStep(1);
+    } else if (step === 1) {
       setStep(0);
     } else {
       analyzeDomain.reset();
       setDomain("");
     }
+  };
+
+  const handleDomainAnalysis = () => {
+    if (!analyzeDomain.data) return;
+
+    const rankedCompanies = calculateRankedCompanies(
+      analyzeDomain.data.agentResponses || []
+    );
+    const analyzedDomain = analyzeDomain.data.data?.domain || "";
+
+    // Get top 3 competitors that are above the analyzed domain
+    const analyzedCompanyRank = rankedCompanies.findIndex(
+      (company) => company.domain === analyzedDomain
+    );
+
+    const topCompetitors = rankedCompanies
+      .slice(0, Math.min(3, analyzedCompanyRank >= 0 ? analyzedCompanyRank : 3))
+      .map((company) => company.domain)
+      .filter((domain) => domain !== analyzedDomain);
+
+    analyzeDomains.mutate({
+      analyzedDomain,
+      competitorDomains: topCompetitors,
+      locale,
+    });
+
+    setStep(2);
   };
 
   if (analyzeDomain.isSuccess) {
@@ -104,12 +136,48 @@ function App() {
                 locale={locale}
                 onNext={() => setStep(1)}
               />
-            ) : (
+            ) : step === 1 ? (
               <Comparison
                 data={analyzeDomain.data}
                 onBack={handleBack}
+                onNext={handleDomainAnalysis}
                 locale={locale}
               />
+            ) : (
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold mb-4">Domain Analysis</h2>
+                  {analyzeDomains.isPending ? (
+                    <div className="space-y-4">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                      <p className="text-muted-foreground">
+                        Analyzing domains with Puppeteer...
+                      </p>
+                    </div>
+                  ) : analyzeDomains.isSuccess ? (
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold">
+                        Analysis Complete
+                      </h3>
+                      <p className="text-muted-foreground">
+                        Domain analysis has been completed. Check console for
+                        data.
+                      </p>
+                      <pre className="text-xs bg-muted p-4 rounded overflow-auto max-h-96">
+                        {JSON.stringify(analyzeDomains.data, null, 2)}
+                      </pre>
+                    </div>
+                  ) : analyzeDomains.isError ? (
+                    <div className="space-y-4">
+                      <p className="text-red-500">
+                        {(analyzeDomains.error as Error).message}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">Loading...</p>
+                  )}
+                </div>
+              </div>
             )}
           </motion.div>
         )}

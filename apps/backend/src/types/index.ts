@@ -98,3 +98,40 @@ export interface ApiError {
   message: string;
   status: number;
 }
+
+export interface DomainAnalysisRequest {
+  analyzedDomain: string;
+  competitorDomains: string[];
+  locale?: string;
+}
+
+export interface DomainAnalysisData {
+  domain: string;
+  url: string;
+  title: string;
+  description: string;
+  content: string;
+  metaTags: {
+    [key: string]: string;
+  };
+  performance: {
+    loadTime: number;
+    domContentLoaded: number;
+  };
+  resources: {
+    scripts: number;
+    stylesheets: number;
+    images: number;
+    fonts: number;
+  };
+  errors: string[];
+}
+
+export interface DomainAnalysisResponse {
+  success: boolean;
+  data?: {
+    analyzedDomain: DomainAnalysisData;
+    competitorDomains: DomainAnalysisData[];
+  };
+  error?: string;
+}

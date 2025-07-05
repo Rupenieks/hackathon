@@ -2,6 +2,8 @@ import axios from "axios";
 import type {
   CompanyAnalysisRequest,
   CompanyAnalysisResponse,
+  DomainAnalysisRequest,
+  DomainAnalysisResponse,
 } from "../types/api";
 
 const API_BASE_URL = "http://localhost:3001";
@@ -18,6 +20,16 @@ export const analyzeCompany = async (
 ): Promise<CompanyAnalysisResponse> => {
   const response = await api.post<CompanyAnalysisResponse>(
     "/api/analyze-company",
+    request
+  );
+  return response.data;
+};
+
+export const analyzeDomains = async (
+  request: DomainAnalysisRequest
+): Promise<DomainAnalysisResponse> => {
+  const response = await api.post<DomainAnalysisResponse>(
+    "/api/analyze-domains",
     request
   );
   return response.data;

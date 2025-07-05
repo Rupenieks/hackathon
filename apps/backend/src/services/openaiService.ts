@@ -101,6 +101,47 @@ Generate 30 search questions that users might ask when looking for similar servi
       throw error;
     }
   }
+
+  async generateResponse(
+    systemPrompt: string,
+    userPrompt: string
+  ): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${this.baseUrl}/chat/completions`,
+        {
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt,
+            },
+            {
+              role: "user",
+              content: userPrompt,
+            },
+          ],
+          temperature: 0.7,
+          max_tokens: 2000,
+          response_format: { type: "json_object" },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.apiKey}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const content = response.data.choices[0].message.content;
+      const parsedResponse = JSON.parse(content);
+
+      return parsedResponse.analysis || content;
+    } catch (error) {
+      console.error("Error generating response:", error);
+      throw error;
+    }
+  }
 }
 
 const htmlContentOptimizationGuide = {

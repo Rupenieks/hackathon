@@ -2,15 +2,19 @@ import { Request, Response } from "express";
 import { BrandfetchService } from "../services/brandfetchService.js";
 import { OpenAIService } from "../services/openaiService.js";
 import { LLMAgentService } from "../services/llmAgentService.js";
+import { DomainAnalysisService } from "../services/domainAnalysisService.js";
 import {
   CompanyAnalysisRequest,
   CompanyAnalysisResponse,
+  DomainAnalysisRequest,
+  DomainAnalysisResponse,
 } from "../types/index.js";
 
 export class CompanyController {
   private brandfetchService: BrandfetchService;
   private openaiService: OpenAIService;
   private llmAgentService: LLMAgentService;
+  private domainAnalysisService: DomainAnalysisService;
 
   constructor(
     brandfetchService: BrandfetchService,
@@ -19,6 +23,7 @@ export class CompanyController {
     this.brandfetchService = brandfetchService;
     this.openaiService = openaiService;
     this.llmAgentService = new LLMAgentService(openaiService);
+    this.domainAnalysisService = new DomainAnalysisService();
   }
 
   async analyzeCompany(req: Request, res: Response): Promise<void> {
@@ -61,6 +66,46 @@ export class CompanyController {
       res.json(response);
     } catch (error) {
       console.error("Error analyzing company:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+
+      res.status(500).json({
+        success: false,
+        error: errorMessage,
+      });
+    }
+  }
+
+  async analyzeDomains(req: Request, res: Response): Promise<void> {
+    try {
+      const {
+        analyzedDomain,
+        competitorDomains,
+        locale = "international",
+      }: DomainAnalysisRequest = req.body;
+
+      if (
+        !analyzedDomain ||
+        !competitorDomains ||
+        competitorDomains.length === 0
+      ) {
+        res.status(400).json({
+          success: false,
+          error: "analyzedDomain and competitorDomains are required",
+        });
+        return;
+      }
+
+      const response = await this.domainAnalysisService.analyzeDomains({
+        analyzedDomain,
+        competitorDomains,
+        locale,
+      });
+
+      res.json(response);
+    } catch (error) {
+      console.error("Error analyzing domains:", error);
 
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";

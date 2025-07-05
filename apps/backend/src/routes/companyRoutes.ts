@@ -20,5 +20,10 @@ export function createCompanyRoutes(
     companyController.analyzeCompany(req, res);
   });
 
+  // POST /api/analyze-domains
+  router.post("/analyze-domains", (req: Request, res: Response) => {
+    companyController.analyzeDomains(req, res);
+  });
+
   return router;
 }
