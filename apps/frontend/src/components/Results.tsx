@@ -9,10 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import {
-  calculateRankedCompanies,
-  type RankedCompany,
-} from "../utils/analysis";
+import { calculateRankedCompanies } from "../utils/analysis";
 import type { CompanyAnalysisResponse } from "../types/api";
 
 interface ResultsProps {
@@ -50,7 +47,7 @@ export function Results({ data, onBack }: ResultsProps) {
         </div>
         <h2 className="text-3xl font-bold mb-2">Analysis Results</h2>
         <p className="text-muted-foreground">
-          Top companies ranked by relevance across all search queries
+          Top companies ranked by number of mentions across all search queries
         </p>
       </motion.div>
 
@@ -67,8 +64,7 @@ export function Results({ data, onBack }: ResultsProps) {
               <TableHead>Company</TableHead>
               <TableHead>Domain</TableHead>
               <TableHead className="text-center">Mentions</TableHead>
-              <TableHead className="text-center">Avg Score</TableHead>
-              <TableHead className="text-center">Percentage</TableHead>
+              <TableHead className="text-center">% of Mentions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,7 +77,13 @@ export function Results({ data, onBack }: ResultsProps) {
                 className="hover:bg-muted/50 transition-colors"
               >
                 <TableCell className="font-medium">#{index + 1}</TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium flex items-center gap-2">
+                  <img
+                    src={`https://cdn.brandfetch.io/${company.domain}/w/400/h/400?c=1idN2eYLKB0hVXPuRKG`}
+                    alt={company.companyName}
+                    className="w-8 h-8 rounded-full object-contain bg-white border"
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
                   {company.companyName}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
@@ -91,17 +93,14 @@ export function Results({ data, onBack }: ResultsProps) {
                   {company.mentionCount}
                 </TableCell>
                 <TableCell className="text-center">
-                  {company.averageScore.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-center">
                   <div className="flex items-center justify-center gap-2">
                     <span className="font-medium">
-                      {company.percentageScore.toFixed(1)}%
+                      {company.percentageMentions.toFixed(1)}%
                     </span>
                     <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${company.percentageScore}%` }}
+                        animate={{ width: `${company.percentageMentions}%` }}
                         transition={{ delay: 0.8 + index * 0.1, duration: 0.5 }}
                         className="h-full bg-primary rounded-full"
                       />
