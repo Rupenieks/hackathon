@@ -1,6 +1,6 @@
 # AI Search Analytics Backend
 
-This is the backend service for the AI Search Analytics platform. It provides APIs for company analysis using Brandfetch data.
+This is the backend service for the AI Search Analytics platform. It provides APIs for company analysis using Brandfetch data and generates search questions using OpenAI.
 
 ## Setup
 
@@ -9,6 +9,7 @@ This is the backend service for the AI Search Analytics platform. It provides AP
 - Node.js 18+
 - pnpm package manager
 - Brandfetch API Key
+- OpenAI API Key
 
 ### Installation
 
@@ -19,8 +20,9 @@ pnpm install
 # Copy environment variables
 cp env.example .env
 
-# Edit .env file with your Brandfetch API Key
+# Edit .env file with your API keys
 BRANDFETCH_API_KEY=your_brandfetch_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 ### Development
@@ -74,37 +76,42 @@ Body:
     "name": "AutoScout24",
     "domain": "autoscout24.de",
     "description": "Company description...",
-    "logo": {
-      "type": "logo",
-      "url": "https://logo-url.com"
-    },
-    "colors": [
-      {
-        "type": "primary",
-        "hex": "#FF0000"
-      }
-    ],
-    "fonts": [
-      {
-        "type": "primary",
-        "name": "Arial"
-      }
-    ],
-    "images": [
-      {
-        "type": "hero",
-        "url": "https://image-url.com"
-      }
-    ],
-    "links": [
-      {
-        "type": "website",
-        "url": "https://autoscout24.de"
-      }
-    ]
-  }
+    "logos": [...],
+    "colors": [...],
+    "fonts": [...],
+    "company": {
+      "industries": [...]
+    }
+  },
+  "searchQuestions": [
+    "best car buying app",
+    "where to find used cars online",
+    "car listings website",
+    "how to sell my car online",
+    "car marketplace Germany",
+    "used car search",
+    "car buying platform",
+    "automotive marketplace",
+    "car dealer website",
+    "vehicle listings"
+  ]
 }
 ```
+
+## Features
+
+### Company Information
+
+- Fetches comprehensive company data from Brandfetch
+- Includes logos, colors, fonts, and industry classification
+- Provides company description and metadata
+
+### Search Questions Generation
+
+- Uses OpenAI GPT-4o to generate 10-15 search questions
+- Questions are designed to not mention the company directly
+- Optimized for search engine analysis
+- Covers informational, transactional, and navigational search intent
 
 ## Error Handling
 
@@ -121,7 +128,9 @@ Common error scenarios:
 
 - Missing `companyUrl` in request body
 - Invalid Brandfetch API key
+- Invalid OpenAI API key
 - Company not found in Brandfetch database
+- OpenAI rate limit exceeded
 - Network errors
 
 ## Environment Variables
@@ -129,6 +138,7 @@ Common error scenarios:
 | Variable             | Description             | Default               |
 | -------------------- | ----------------------- | --------------------- |
 | `BRANDFETCH_API_KEY` | Your Brandfetch API Key | Required              |
+| `OPENAI_API_KEY`     | Your OpenAI API Key     | Required              |
 | `PORT`               | Server port             | 3001                  |
 | `CORS_ORIGIN`        | Allowed CORS origin     | http://localhost:3000 |
 
@@ -150,7 +160,7 @@ Common error scenarios:
 
 This is the first phase of the AI Search Analytics platform. Future phases will include:
 
-- LLM integration for search query generation
+- LLM response analysis for search questions
 - Competitor analysis
 - Website scraping with Puppeteer
 - SEO optimization analysis

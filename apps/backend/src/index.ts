@@ -30,12 +30,19 @@ app.get("/health", (req, res) => {
 
 // API routes
 const brandfetchApiKey = process.env.BRANDFETCH_API_KEY;
+const openaiApiKey = process.env.OPENAI_API_KEY;
+
 if (!brandfetchApiKey) {
   console.error("BRANDFETCH_API_KEY is required in environment variables");
   process.exit(1);
 }
 
-app.use("/api", createCompanyRoutes(brandfetchApiKey));
+if (!openaiApiKey) {
+  console.error("OPENAI_API_KEY is required in environment variables");
+  process.exit(1);
+}
+
+app.use("/api", createCompanyRoutes(brandfetchApiKey, openaiApiKey));
 
 // Error handling middleware
 app.use(

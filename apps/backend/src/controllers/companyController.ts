@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { BrandfetchService } from "../services/brandfetchService.js";
+import { OpenAIService } from "../services/openaiService.js";
 import {
   CompanyAnalysisRequest,
   CompanyAnalysisResponse,
@@ -7,9 +8,14 @@ import {
 
 export class CompanyController {
   private brandfetchService: BrandfetchService;
+  private openaiService: OpenAIService;
 
-  constructor(brandfetchService: BrandfetchService) {
+  constructor(
+    brandfetchService: BrandfetchService,
+    openaiService: OpenAIService
+  ) {
     this.brandfetchService = brandfetchService;
+    this.openaiService = openaiService;
   }
 
   async analyzeCompany(req: Request, res: Response): Promise<void> {
@@ -31,9 +37,14 @@ export class CompanyController {
       const companyInfo =
         await this.brandfetchService.getCompanyByDomain(domain);
 
+      // Generate search questions using OpenAI
+      const searchQuestions =
+        await this.openaiService.generateSearchQuestions(companyInfo);
+
       const response: CompanyAnalysisResponse = {
         success: true,
         data: companyInfo,
+        searchQuestions: searchQuestions,
       };
 
       res.json(response);

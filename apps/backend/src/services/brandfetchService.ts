@@ -42,16 +42,6 @@ export class BrandfetchService {
 
       return companyResponse.data;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        if (axiosError.response?.status === 401) {
-          throw new Error("Invalid Brandfetch API key");
-        } else if (axiosError.response?.status === 404) {
-          throw new Error(`Company not found for domain: ${domain}`);
-        } else {
-          throw new Error(`Brandfetch API error: ${axiosError.message}`);
-        }
-      }
       throw error;
     }
   }
@@ -69,7 +59,7 @@ export class BrandfetchService {
       return response.data;
     } catch (error) {
       // If direct domain lookup fails, try search
-      return this.getCompanyInfo(domain);
+      return await this.getCompanyInfo(domain);
     }
   }
 }
