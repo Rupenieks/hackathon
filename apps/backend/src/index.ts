@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { createCompanyRoutes } from "./routes/companyRoutes.js";
 import { createDomainComparisonRoutes } from "./routes/domainComparisonRoutes.js";
+import { createQuestionOptimizationRoutes } from "./routes/questionOptimizationRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -31,6 +32,7 @@ if (!openaiApiKey) {
 
 app.use("/api", createCompanyRoutes(brandfetchApiKey, openaiApiKey));
 app.use("/api/domain-comparison", createDomainComparisonRoutes());
+app.use("/api/question-optimization", createQuestionOptimizationRoutes());
 
 // Error handling middleware
 app.use(

@@ -8,12 +8,14 @@ import { Results } from "./components/Results";
 import { LocaleSelector } from "./components/LocaleSelector";
 import { Comparison } from "./components/Comparison";
 import { DomainComparison } from "./components/DomainComparison";
+import { QuestionOptimization } from "./components/QuestionOptimization";
 import { calculateRankedCompanies } from "./utils/analysis";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 
 function App() {
   const [domain, setDomain] = useState("");
   const [locale, setLocale] = useState("international");
-  const [step, setStep] = useState(0); // 0 = results, 1 = comparison, 2 = domain comparison
+  const [step, setStep] = useState(0); // 0 = results, 1 = comparison, 2 = final step with tabs
   const analyzeDomain = useAnalyzeDomain();
   const [comparisonData, setComparisonData] = useState({
     analyzedDomain: "",
@@ -152,39 +154,48 @@ function App() {
                 locale={locale}
               />
             ) : (
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">
-                    Domain Comparison Analysis
-                  </h2>
-                  {domainComparison.isLoading ? (
-                    <div className="space-y-4">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                      <p className="text-muted-foreground">
-                        Analyzing domains with Puppeteer and comparing with
-                        AI...
-                      </p>
-                    </div>
-                  ) : domainComparison.data ? (
-                    <div className="w-full max-w-6xl mx-auto p-6">
-                      <div className="flex justify-between items-center mb-6">
-                        <Button onClick={handleBack} variant="outline">
-                          ← Back
-                        </Button>
-                      </div>
-                      <DomainComparison data={domainComparison.data} />
-                    </div>
-                  ) : domainComparison.error ? (
-                    <div className="space-y-4">
-                      <p className="text-red-500">{domainComparison.error}</p>
-                      <Button onClick={handleBack} variant="outline">
-                        ← Back
-                      </Button>
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground">Loading...</p>
-                  )}
+              <div className="min-h-screen w-full max-w-6xl mx-auto p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <Button onClick={handleBack} variant="outline">
+                    ← Back
+                  </Button>
                 </div>
+                <Tabs defaultValue="domain-comparison" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="domain-comparison">
+                      Domain Comparison
+                    </TabsTrigger>
+                    <TabsTrigger value="question-optimization">
+                      Question Optimization
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="domain-comparison">
+                    {domainComparison.isLoading ? (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                        <p className="text-muted-foreground">
+                          Analyzing domains with Puppeteer and comparing with
+                          AI...
+                        </p>
+                      </div>
+                    ) : domainComparison.data ? (
+                      <DomainComparison data={domainComparison.data} />
+                    ) : domainComparison.error ? (
+                      <div className="space-y-4">
+                        <p className="text-red-500">{domainComparison.error}</p>
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground">Loading...</p>
+                    )}
+                  </TabsContent>
+                  <TabsContent value="question-optimization">
+                    <QuestionOptimization
+                      originalData={analyzeDomain.data}
+                      targetDomain={analyzeDomain.data.data?.domain || ""}
+                      onBack={handleBack}
+                    />
+                  </TabsContent>
+                </Tabs>
               </div>
             )}
           </motion.div>

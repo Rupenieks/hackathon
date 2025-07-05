@@ -168,3 +168,36 @@ export interface DomainComparisonResponse {
   };
   error?: string;
 }
+
+export interface QuestionOptimizationAnalysis {
+  currentTotalMentions: number;
+  currentTargetMentions: number;
+  previousTotalMentions: number;
+  previousTargetMentions: number;
+  totalMentionsChange: number;
+  targetMentionsChange: number;
+  hitRateChange: number;
+  isImproving: boolean;
+  currentHitRate: number;
+  previousHitRate: number;
+}
+
+export interface QuestionOptimizationRequest {
+  targetDomain: string;
+  originalQuestions: string[];
+  usedQuestions?: string[];
+  currentResults?: CompanyAnalysisResponse;
+  iteration?: number;
+}
+
+export interface QuestionOptimizationResponse {
+  success: boolean;
+  data?: {
+    iteration: number;
+    newQuestions: string[];
+    agentResponses: AgentResponse[];
+    analysis: QuestionOptimizationAnalysis;
+    isComplete: boolean;
+  };
+  error?: string;
+}
