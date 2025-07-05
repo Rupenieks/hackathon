@@ -5,21 +5,28 @@ import { Button } from "./components/ui/button";
 import { useAnalyzeDomain } from "./hooks/useAnalyzeDomain";
 import { Results } from "./components/Results";
 import { LocaleSelector } from "./components/LocaleSelector";
+import { Comparison } from "./components/Comparison";
 
 function App() {
   const [domain, setDomain] = useState("");
   const [locale, setLocale] = useState("international");
+  const [step, setStep] = useState(0); // 0 = results, 1 = comparison
   const analyzeDomain = useAnalyzeDomain();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!domain) return;
     analyzeDomain.mutate({ companyUrl: domain, locale });
+    setStep(0);
   };
 
   const handleBack = () => {
-    analyzeDomain.reset();
-    setDomain("");
+    if (step === 1) {
+      setStep(0);
+    } else {
+      analyzeDomain.reset();
+      setDomain("");
+    }
   };
 
   if (analyzeDomain.isSuccess) {
@@ -83,18 +90,27 @@ function App() {
           </motion.div>
         ) : (
           <motion.div
-            key="results"
+            key={step === 0 ? "results" : "comparison"}
             initial={{ opacity: 0, x: 300 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -300 }}
             transition={{ duration: 0.5 }}
             className="min-h-screen"
           >
-            <Results
-              data={analyzeDomain.data}
-              onBack={handleBack}
-              locale={locale}
-            />
+            {step === 0 ? (
+              <Results
+                data={analyzeDomain.data}
+                onBack={handleBack}
+                locale={locale}
+                onNext={() => setStep(1)}
+              />
+            ) : (
+              <Comparison
+                data={analyzeDomain.data}
+                onBack={handleBack}
+                locale={locale}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>

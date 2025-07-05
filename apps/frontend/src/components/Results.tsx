@@ -24,9 +24,10 @@ interface ResultsProps {
   data: CompanyAnalysisResponse;
   onBack: () => void;
   locale?: string;
+  onNext?: () => void;
 }
 
-export function Results({ data, onBack, locale }: ResultsProps) {
+export function Results({ data, onBack, locale, onNext }: ResultsProps) {
   const rankedCompanies = calculateRankedCompanies(data.agentResponses || []);
 
   return (
@@ -170,6 +171,14 @@ export function Results({ data, onBack, locale }: ResultsProps) {
           </TabsContent>
         </Tabs>
       </motion.div>
+      {/* Next Button */}
+      {onNext && (
+        <div className="flex justify-end mt-8">
+          <Button onClick={onNext} size="lg">
+            Next
+          </Button>
+        </div>
+      )}
     </motion.div>
   );
 }
