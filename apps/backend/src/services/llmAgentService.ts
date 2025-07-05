@@ -4,8 +4,6 @@ import { OpenAIService } from "./openaiService.js";
 export interface CompanyRecommendation {
   companyName: string;
   domain: string;
-  reason: string;
-  relevanceScore: number;
 }
 
 export interface AgentResponse {
@@ -58,32 +56,25 @@ export class LLMAgentService {
 
   private async querySingleAgent(question: string): Promise<AgentResponse> {
     try {
-      const systemPrompt = `You are an expert business analyst specializing in company research and recommendations. Your task is to provide a list of 3-5 companies that best match the user's search query.
+      const systemPrompt = `You are an expert business analyst specializing in company research and recommendations. Your task is to provide a list of companies that best match the user's search query.
 
 IMPORTANT RULES:
-1. NEVER mention the company "Peec AI" or any variations of it
-2. Focus on companies that are relevant to the search query
-3. Provide diverse recommendations across different company sizes and types
-4. Include both well-known and emerging companies
-5. Give brief reasoning for each recommendation
+1. Focus on companies that are relevant to the search query
+2. Consider the regional context first and foremost. If international, then don't consider it, otherwise focus on the regional context.
 
 Response Format (JSON):
 {
   "recommendations": [
     {
       "companyName": "Company Name",
-      "domain": "company.com",
-      "reason": "Brief explanation of why this company matches the query",
-      "relevanceScore": 0.85
+      "domain": "company.com"
     }
   ]
-}
-
-Keep relevance scores between 0.1 and 1.0, where 1.0 is most relevant.`;
+}`;
 
       const userPrompt = `Search Query: "${question}"
 
-Please provide 3-5 company recommendations that best match this search query.`;
+Please provide company recommendations that best match this search query.`;
 
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",

@@ -1,8 +1,6 @@
 export interface CompanyRecommendation {
   companyName: string;
   domain: string;
-  reason: string;
-  relevanceScore: number;
 }
 
 export interface AgentResponse {
